@@ -1,44 +1,37 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import MusicTable from './Components/Music_Table/MusicTable';
-
+import NavBar from './Components/Nav_Bar/NavBar';
+import SearchBar from './Components/Search_Bar/SearchBar';
+import axios from 'axios';
+import AddSongForm from './Components/Add_Song_Form/AddSongForm.jsx';
 
 function App() {
-
     const [songs, setSongs] = useState([]);
+    const [searchTerm, setSearchTerm] = useState('');
 
-  useEffect(() => {
+    useEffect(() => {
+        const fetchSongs = async () => {
+            const response = await axios.get('https://localhost:7246/api/Musics/');
+            setSongs(response.data);
+        };
 
-      getAllSongs();
-      console.log('hello world');
-   
-  }, []);
+        fetchSongs();
+    }, []);
 
-
-  async function getAllSongs(){
-
-    const response = await axios.get('https://localhost:7246/api/Musics');
-    console.log(response.data);
-    setSongs(response.data)
-    //debugger
-  }
-
-  return (
-   <div>
-
-    {/* <button onClick={() => getAllSongs()}>Get All Songs</button> */}
-
-    <div className="App">
-      <header className="App-header">
-        <h1>Music Library</h1>
-      </header>
-      <main>
-        <MusicTable />
-      </main>
-    </div>
-
-   </div>
-  );
+    return (
+        <div className="App">
+            <NavBar />
+            <header className="App-header">
+                <h1>Music Library</h1>
+            </header>
+            <AddSongForm />
+            <SearchBar onSearch={setSearchTerm} />
+            <main>
+                <MusicTable songs={songs} filter={searchTerm} />
+            </main>
+        </div>
+    );
 }
 
 export default App;
+
